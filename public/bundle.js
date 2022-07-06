@@ -1,0 +1,33 @@
+/*
+ * ATTENTION: The "eval" devtool has been used (maybe by default in mode: "development").
+ * This devtool is neither made for production nor for readable output files.
+ * It uses "eval()" calls to create a separate source file in the browser devtools.
+ * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
+ * or disable the default devtool with "devtool: false".
+ * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
+ */
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "./src/index.ts":
+/*!**********************!*\
+  !*** ./src/index.ts ***!
+  \**********************/
+/***/ (() => {
+
+eval("\r\nlet boardState = [\r\n    [\"\", \"\", \"\"],\r\n    [\"\", \"\", \"\"],\r\n    [\"\", \"\", \"\"]\r\n];\r\nlet currentMove = \"X\";\r\nlet winner = \"\";\r\nconst appElement = document.getElementById('app');\r\nconst boardElement = document.getElementById('board');\r\nconst ROW_COUNT = 3;\r\nconst COL_COUNT = 3;\r\nconst victories = [\r\n    // Conditiile de castig pe rand, coloana si diagonala in functie de\r\n    // coordonatele butoanelor, incepand de la 0 cu 0 din stanga sus\r\n    [\r\n        [0, 0],\r\n        [0, 1],\r\n        [0, 2]\r\n    ],\r\n    [\r\n        [1, 0],\r\n        [1, 1],\r\n        [1, 2]\r\n    ],\r\n    [\r\n        [2, 0],\r\n        [2, 1],\r\n        [2, 2]\r\n    ],\r\n    [\r\n        [0, 0],\r\n        [1, 0],\r\n        [2, 0],\r\n    ],\r\n    [\r\n        [0, 1],\r\n        [1, 1],\r\n        [2, 1],\r\n    ],\r\n    [\r\n        [0, 2],\r\n        [1, 2],\r\n        [2, 2],\r\n    ],\r\n    [\r\n        [0, 0],\r\n        [1, 1],\r\n        [2, 2],\r\n    ],\r\n    [\r\n        [0, 2],\r\n        [1, 1],\r\n        [2, 0],\r\n    ]\r\n];\r\nfunction createCell(row, col, content = \"\") {\r\n    // Acesta functie defineste butonul si atributele pe care le va contine\r\n    const cell = document.createElement(\"button\");\r\n    cell.setAttribute(\"data-row\", row.toString());\r\n    cell.setAttribute(\"data-col\", col.toString());\r\n    cell.setAttribute(\"data-content\", content);\r\n    cell.classList.add('cell');\r\n    // Adaugam un even listener pentru a identifica butonul apasat\r\n    // si pentru a popula butonul cu valoare jucatorului\r\n    cell.addEventListener('click', () => {\r\n        if (winner)\r\n            return;\r\n        if (boardState[row][col] === '') {\r\n            boardState[row][col] = currentMove;\r\n            currentMove = currentMove === 'X' ? 'O' : 'X';\r\n            // Aici vom adauga valuarea returnata de functia checkBoard\r\n            // care stabilete castigatorul\r\n            winner = checkBoard();\r\n            // urmatoare functie va construi tabala de joc\r\n            renderBoard();\r\n        }\r\n    });\r\n    return cell;\r\n}\r\nfunction renderBoard() {\r\n    // Acesta functie genereaza tabla de joc\r\n    // vom folosi un for loop pentru functia createCell care va genera 9\r\n    // butoane si la va lega de elementul parinte\r\n    if (!appElement)\r\n        throw new Error(\"Cannot find app\");\r\n    if (!boardElement)\r\n        throw new Error(\"Cannot find app\");\r\n    boardElement.innerHTML = '';\r\n    for (let i = 0; i < ROW_COUNT; i++) {\r\n        for (let j = 0; j < COL_COUNT; j++) {\r\n            boardElement.appendChild(createCell(i, j, boardState[i][j]));\r\n        }\r\n    }\r\n    // Aici vom construi blocul care afiseaza jucatorul si castigatorul/egalitatea\r\n    // Mai intai vom inlatura elementul daca acesta exista\r\n    const oldMoveElement = document.getElementById(\"move-element\");\r\n    if (oldMoveElement) {\r\n        oldMoveElement.remove();\r\n    }\r\n    const moveElement = document.createElement(\"p\");\r\n    moveElement.id = 'move-element';\r\n    moveElement.innerText = winner ? `Winner ${winner}!` : `Next Move: ${currentMove}`;\r\n    moveElement.classList.add(\"current-move\");\r\n    appElement.insertBefore(moveElement, document.getElementById('reset'));\r\n}\r\n// Aceasta functie va cauta in fiecare buton combinatia castigatoare sau\r\n// de egalitate\r\nfunction checkBoard() {\r\n    for (let victory of victories) {\r\n        // Aici iteram prin cate trei celule/butane pentru combinatia\r\n        // castigatoare.\r\n        const cell1 = boardState[victory[0][0]][victory[0][1]];\r\n        const cell2 = boardState[victory[1][0]][victory[1][1]];\r\n        const cell3 = boardState[victory[2][0]][victory[2][1]];\r\n        // Aici spunem: daca prima celula nu este goale si prima celula\r\n        // este egala cu ceula a doua si celula a doua este egala cu\\\r\n        // celula a treia atunci vom returna prima celula\r\n        // Deci aici este verificarea de castigator\r\n        if (cell1 !== \"\" && cell1 === cell2 && cell2 === cell3) {\r\n            return cell1;\r\n        }\r\n    }\r\n    // Acum vom verifica daca este egalitate.\r\n    let isDraw = true;\r\n    for (let i = 0; i < ROW_COUNT; i++) {\r\n        for (let j = 0; j < COL_COUNT; j++) {\r\n            // Mai intai verificam conditia de egalitate\r\n            if (boardState[i][j] === \"\")\r\n                isDraw = false;\r\n        }\r\n    }\r\n    if (isDraw)\r\n        return 'Draw';\r\n    return '';\r\n    // Acesta functie va returna castigatorul sau egalitatea sau nimic\r\n    // in cazul in care jocul nu s-a terminat\r\n}\r\n// Aceasta functie initializeaza butonul de reset, sterge tabla, desmneaza\r\n// jucatorul curent ca X si initiaza renderizarea tablei de joc\r\nfunction init() {\r\n    const resetButton = document.getElementById('reset');\r\n    if (!resetButton)\r\n        throw new Error('No reset button');\r\n    resetButton.addEventListener('click', () => {\r\n        boardState = [\r\n            ['', '', ''],\r\n            ['', '', ''],\r\n            ['', '', '']\r\n        ];\r\n        currentMove = 'X';\r\n        winner = \"\";\r\n        renderBoard();\r\n    });\r\n    renderBoard();\r\n}\r\ninit();\r\n\n\n//# sourceURL=webpack://tictactoe---typescritpt-javacript-first/./src/index.ts?");
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module can't be inlined because the eval devtool is used.
+/******/ 	var __webpack_exports__ = {};
+/******/ 	__webpack_modules__["./src/index.ts"]();
+/******/ 	
+/******/ })()
+;
